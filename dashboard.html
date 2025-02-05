@@ -1,106 +1,45 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Школа - Панель управления</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="/asy/styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+    <script src="/asy/script.js" defer></script>
 </head>
 <body>
     <div class="dashboard-container">
+        <!-- Logout Button -->
         <button class="logout-button" onclick="logout()">Выйти</button>
+
+        <!-- Table Selection Buttons -->
         <div class="buttons-container">
-            <button onclick="loadTable('students')">Учащиеся</button>
-            <button onclick="loadTable('staff')">Сотрудники</button>
+            <button id="studentsButton" onclick="showStudents()">Учащиеся</button>
+            <button id="staffButton" onclick="showStaff()">Сотрудники</button>
         </div>
-        <select id="filterClass" onchange="applyFilter()">
-            <option value="">Выберите класс</option>
-            <option value="9А">9А</option>
-            <option value="10А">10А</option>
-            <option value="11">11</option>
-        </select>
-        <button onclick="sortTable(1)">Сортировать по фамилии</button>
-        <button onclick="sortTable(0)">Сортировать по № личного дела</button>
-        <button onclick="sortTable(5)">Сортировать по классу</button>
-        <button onclick="exportToExcel()">Экспорт в Excel</button>
-        <button onclick="upgradeClasses()">Повысить класс</button>
+
+        <!-- Filter and Sorting for Students -->
+        <div id="studentsControls" style="display: none;">
+            <select id="filterClass" onchange="filterByClass()">
+                <option value="">Выберите класс</option>
+                <option value="9A">9А</option>
+                <option value="9B">9Б</option>
+                <option value="10A">10А</option>
+                <option value="10B">10Б</option>
+                <option value="11A">11А</option>
+                <option value="11B">11Б</option>
+            </select>
+            <button onclick="sortTable('lastName')">Сортировать по фамилии</button>
+            <button onclick="sortTable('personalNumber')">Сортировать по № личного дела</button>
+            <button onclick="sortTable('class')">Сортировать по классу</button>
+            <button onclick="promoteStudents()">Повысить класс</button>
+        </div>
+
+        <!-- Table Content -->
         <div id="content"></div>
+
+        <!-- Export Button -->
+        <button class="export-button" id="exportButton" style="display: none;" onclick="exportToExcel()">Экспорт в Excel</button>
     </div>
-    
-    <script>
-        let currentData = [];
-        
-        async function loadTable(type) {
-            const response = await fetch(type === 'students' ? "students-data.json" : "staff-data.json");
-            currentData = await response.json();
-            renderTable(currentData, type);
-        }
-        
-        function renderTable(data, type) {
-            let content = `<table id="dataTable" border='1'><tr>
-                ${type === 'students' ? '<th>№ Личного дела</th>' : '<th>Логин в AD</th>'}
-                <th>Фамилия</th><th>Имя</th><th>Отчество</th><th>Дата рождения</th>
-                ${type === 'students' ? '<th>Класс</th>' : '<th>Должность</th>'}
-                <th>Адрес проживания</th>
-                ${type === 'students' ? '<th>Дата зачисления</th><th>ФИО матери</th><th>ФИО отца</th>' : '<th>Дата трудоустройства</th>'}
-                <th>Действия</th></tr>`;
-            
-            data.forEach(item => {
-                content += `<tr>
-                    <td contenteditable="true">${type === 'students' ? item.personal_number : item.ad_login}</td>
-                    <td contenteditable="true">${item.surname}</td>
-                    <td contenteditable="true">${item.name}</td>
-                    <td contenteditable="true">${item.patronymic}</td>
-                    <td contenteditable="true">${item.birth_date}</td>
-                    <td contenteditable="true">${type === 'students' ? item.class : item.position}</td>
-                    <td contenteditable="true">${item.address}</td>
-                    <td contenteditable="true">${type === 'students' ? item.enrollment_date : item.hiring_date}</td>
-                    ${type === 'students' ? `<td contenteditable="true">${item.mother_fio}</td><td contenteditable="true">${item.father_fio}</td>` : ''}
-                    <td><button onclick="saveData('${type}', '${item.personal_number || item.ad_login}')">Сохранить</button></td>
-                </tr>`;
-            });
-            content += "</table>";
-            
-            document.getElementById("content").innerHTML = content;
-        }
-        
-        function applyFilter() {
-            let filterValue = document.getElementById("filterClass").value;
-            let filteredData = currentData.filter(item => item.class === filterValue || filterValue === "");
-            renderTable(filteredData, 'students');
-        }
-        
-        function sortTable(columnIndex) {
-            let table = document.getElementById("dataTable");
-            let rows = Array.from(table.rows).slice(1);
-            rows.sort((a, b) => a.cells[columnIndex].innerText.localeCompare(b.cells[columnIndex].innerText, 'ru', {numeric: true}));
-            rows.forEach(row => table.appendChild(row));
-        }
-        
-        function exportToExcel() {
-            let wb = XLSX.utils.table_to_book(document.getElementById("dataTable"));
-            XLSX.writeFile(wb, "export.xlsx");
-        }
-        
-        function upgradeClasses() {
-            document.querySelectorAll("td[contenteditable=true]:nth-child(6)").forEach(cell => {
-                let match = cell.textContent.match(/^(\d+)([А-Яа-я]*)$/);
-                if (match) {
-                    let newClass = parseInt(match[1]) + 1 + match[2];
-                    cell.textContent = newClass;
-                }
-            });
-        }
-        
-        function saveData(type, id) {
-            alert(`Изменения для ${id} сохранены (функционал редактирования требует серверной обработки).`);
-        }
-        
-        function logout() {
-            localStorage.removeItem("userRole");
-            window.location.href = "/asy/index.html";
-        }
-    </script>
 </body>
 </html>

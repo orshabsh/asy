@@ -1,1 +1,14 @@
-
+[
+    {
+        "personalNumber": "1",
+        "lastName": "Иванов",
+        "firstName": "Иван",
+        "middleName": "Иванович",
+        "birthDate": "2005-09-01",
+        "class": "10A",
+        "address": "ул. Ленина, д. 5",
+        "enrollmentDate": "2015-09-01",
+        "motherName": "Иванова Мария",
+        "fatherName": "Иванов Сергей"
+    }
+]

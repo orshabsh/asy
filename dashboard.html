@@ -8,43 +8,48 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <h2>Добро пожаловать, <span id="role"></span></h2>
+        <button class="logout-button" onclick="logout()">Выйти</button>
+        <div class="buttons-container">
+            <button onclick="loadTable('students')">Учащиеся</button>
+            <button onclick="loadTable('staff')">Сотрудники</button>
+        </div>
         <div id="content"></div>
-        <button onclick="logout()">Выйти</button>
     </div>
     
     <script>
         document.addEventListener("DOMContentLoaded", async () => {
             const role = localStorage.getItem("userRole");
-            document.getElementById("role").textContent = role || "Гость";
-            
             if (!role) {
                 window.location.href = "/asy/index.html";
                 return;
             }
-            
-            const response = await fetch("/asy/data.json");
+        });
+
+        async function loadTable(type) {
+            const response = await fetch("data.json");
             const users = await response.json();
+            let data = users.filter(u => (type === 'students' && u.role === 'student') || (type === 'staff' && u.role !== 'student'));
             
-            let content = "";
-            if (role === "director") {
-                content = "<p>Доступ ко всей информации школы.</p>";
-            } else if (role === "secretary") {
-                content = "<p>Доступ к данным об учениках.</p>";
-            } else if (role === "hr") {
-                content = "<p>Доступ к данным о сотрудниках.</p>";
-            } else if (role === "teacher") {
-                content = "<p>Доступ к данным о своих учениках.</p>";
-            } else {
-                content = "<p>Нет доступа.</p>";
-            }
+            let content = "<table border='1'><tr><th>Имя</th><th>Роль</th><th>Действия</th></tr>";
+            data.forEach(user => {
+                content += `<tr>
+                                <td contenteditable="true">${user.username}</td>
+                                <td>${user.role}</td>
+                                <td><button onclick="saveData('${user.username}')">Сохранить</button></td>
+                            </tr>`;
+            });
+            content += "</table>";
             
             document.getElementById("content").innerHTML = content;
-        });
+        }
         
+        function saveData(username) {
+            alert(`Изменения для ${username} сохранены (функционал редактирования требует серверной обработки).`);
+        }
+
         function logout() {
             localStorage.removeItem("userRole");
-            window.location.href = "/asy/login.html";
+            window.location.href = "/asy/index.html";
         }
     </script>
 </body>

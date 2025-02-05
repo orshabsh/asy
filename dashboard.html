@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Школа - Панель управления</title>
+    <link rel="stylesheet" href="/asy/styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>Добро пожаловать, <span id="role"></span></h2>
+        <div id="content"></div>
+        <button onclick="logout()">Выйти</button>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const role = localStorage.getItem("userRole");
+            document.getElementById("role").textContent = role || "Гость";
+            
+            if (!role) {
+                window.location.href = "/asy/index.html";
+                return;
+            }
+            
+            const response = await fetch("/asy/data.json");
+            const users = await response.json();
+            
+            let content = "";
+            if (role === "director") {
+                content = "<p>Доступ ко всей информации школы.</p>";
+            } else if (role === "secretary") {
+                content = "<p>Доступ к данным об учениках.</p>";
+            } else if (role === "hr") {
+                content = "<p>Доступ к данным о сотрудниках.</p>";
+            } else if (role === "teacher") {
+                content = "<p>Доступ к данным о своих учениках.</p>";
+            } else {
+                content = "<p>Нет доступа.</p>";
+            }
+            
+            document.getElementById("content").innerHTML = content;
+        });
+        
+        function logout() {
+            localStorage.removeItem("userRole");
+            window.location.href = "/asy/login.html";
+        }
+    </script>
+</body>
+</html>

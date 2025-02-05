@@ -1,13 +1,14 @@
-// Handles logout functionality
+// Подключение к Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Функция выхода
 function logout() {
     window.location.href = "/asy/index.html";
 }
 
-// Shows the students table and controls
+// Отображение таблицы учеников
 function showStudents() {
-    document.getElementById("studentsControls").style.display = "block";
-    document.getElementById("exportButton").style.display = "block";
-    function showStudents() {
     document.getElementById("studentsControls").style.display = "block";
     document.getElementById("exportButton").style.display = "block";
 
@@ -17,13 +18,8 @@ function showStudents() {
     });
 }
 
-}
-
-// Shows the staff table and hides students controls
+// Отображение таблицы сотрудников
 function showStaff() {
-    document.getElementById("studentsControls").style.display = "none";
-    document.getElementById("exportButton").style.display = "block";
-    function showStaff() {
     document.getElementById("studentsControls").style.display = "none";
     document.getElementById("exportButton").style.display = "block";
 
@@ -33,71 +29,42 @@ function showStaff() {
     });
 }
 
-}
-
-function updateStudent(id, updatedData) {
-    db.collection("students").doc(id).update(updatedData)
-        .then(() => alert("Данные обновлены!"))
-        .catch(error => console.error("Ошибка обновления: ", error));
-}
-
-function updateStaff(id, updatedData) {
-    db.collection("staff").doc(id).update(updatedData)
-        .then(() => alert("Данные обновлены!"))
-        .catch(error => console.error("Ошибка обновления: ", error));
-}
-
-function addStudent(studentData) {
-    db.collection("students").add(studentData)
-        .then(() => alert("Ученик добавлен!"))
-        .catch(error => console.error("Ошибка добавления: ", error));
-}
-
-function addStaff(staffData) {
-    db.collection("staff").add(staffData)
-        .then(() => alert("Сотрудник добавлен!"))
-        .catch(error => console.error("Ошибка добавления: ", error));
-}
-
-function deleteStudent(id) {
-    db.collection("students").doc(id).delete()
-        .then(() => alert("Ученик удалён!"))
-        .catch(error => console.error("Ошибка удаления: ", error));
-}
-
-function deleteStaff(id) {
-    db.collection("staff").doc(id).delete()
-        .then(() => alert("Сотрудник удалён!"))
-        .catch(error => console.error("Ошибка удаления: ", error));
-}
-
-
-// Loads table data from a JSON file
-function loadTableData(url, type) {
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            if (type === "students") {
-                renderStudentsTable(data);
-            } else {
-                renderStaffTable(data);
-            }
+// Фильтрация учеников по классу
+function filterByClass() {
+    const selectedClass = document.getElementById("filterClass").value;
+    db.collection("students").where("class", "==", selectedClass).get()
+        .then(snapshot => {
+            const filteredStudents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            renderStudentsTable(filteredStudents);
         });
 }
 
-// Renders the students table
+// Сортировка таблицы
+function sortTable(key) {
+    const content = document.querySelector("tbody");
+    let rows = Array.from(content.querySelectorAll("tr"));
+    rows.sort((a, b) => {
+        const aValue = a.querySelector(`td[data-key='${key}']`).innerText;
+        const bValue = b.querySelector(`td[data-key='${key}']`).innerText;
+        return aValue.localeCompare(bValue, 'ru', { numeric: true });
+    });
+    content.innerHTML = "";
+    rows.forEach(row => content.appendChild(row));
+}
+
+// Рендеринг таблицы учеников
 function renderStudentsTable(data) {
     const content = document.getElementById("content");
     content.innerHTML = `<table>
         <thead>
             <tr>
-                <th>№ Личного дела</th>
-                <th>Фамилия</th>
+                <th onclick="sortTable('personalNumber')">№ Личного дела</th>
+                <th onclick="sortTable('lastName')">Фамилия</th>
                 <th>Имя</th>
                 <th>Отчество</th>
                 <th>Дата рождения</th>
-                <th>Класс</th>
-                <th>Адрес проживания</th>
+                <th onclick="sortTable('class')">Класс</th>
+                <th>Адрес</th>
                 <th>Дата зачисления</th>
                 <th>ФИО матери</th>
                 <th>ФИО отца</th>
@@ -107,23 +74,23 @@ function renderStudentsTable(data) {
         <tbody>
             ${data.map(student => `
                 <tr>
-                    <td>${student.personalNumber}</td>
-                    <td>${student.lastName}</td>
+                    <td data-key="personalNumber">${student.personalNumber}</td>
+                    <td data-key="lastName">${student.lastName}</td>
                     <td>${student.firstName}</td>
                     <td>${student.middleName}</td>
                     <td>${student.birthDate}</td>
-                    <td>${student.class}</td>
+                    <td data-key="class">${student.class}</td>
                     <td>${student.address}</td>
                     <td>${student.enrollmentDate}</td>
                     <td>${student.motherName}</td>
                     <td>${student.fatherName}</td>
-                    <td><button onclick="editStudent('${student.personalNumber}')">Редактировать</button></td>
+                    <td><button onclick="deleteStudent('${student.id}')">Удалить</button></td>
                 </tr>`).join("")}
         </tbody>
     </table>`;
 }
 
-// Renders the staff table
+// Рендеринг таблицы сотрудников
 function renderStaffTable(data) {
     const content = document.getElementById("content");
     content.innerHTML = `<table>
@@ -135,7 +102,7 @@ function renderStaffTable(data) {
                 <th>Отчество</th>
                 <th>Дата рождения</th>
                 <th>Должность</th>
-                <th>Адрес проживания</th>
+                <th>Адрес</th>
                 <th>Дата трудоустройства</th>
                 <th>Действия</th>
             </tr>
@@ -151,58 +118,41 @@ function renderStaffTable(data) {
                     <td>${staff.position}</td>
                     <td>${staff.address}</td>
                     <td>${staff.hiringDate}</td>
-                    <td><button onclick="editStaff('${staff.login}')">Редактировать</button></td>
+                    <td><button onclick="deleteStaff('${staff.id}')">Удалить</button></td>
                 </tr>`).join("")}
         </tbody>
     </table>`;
 }
 
-// Filters students by class
-function filterByClass() {
-    const selectedClass = document.getElementById("filterClass").value;
-    fetch("/asy/students-data.json")
-        .then(response => response.json())
-        .then(data => {
-            const filteredData = data.filter(student => student.class === selectedClass);
-            renderStudentsTable(filteredData);
-        });
+// Добавление ученика
+function addStudent(studentData) {
+    db.collection("students").add(studentData)
+        .then(() => alert("Ученик добавлен!"))
+        .catch(error => console.error("Ошибка добавления: ", error));
 }
 
-// Sorts the table by a specific key
-function sortTable(key) {
-    const tableData = Array.from(document.querySelectorAll("tbody tr"));
-    tableData.sort((a, b) => {
-        const aValue = a.querySelector(`td:nth-child(${getKeyIndex(key)})`).innerText;
-        const bValue = b.querySelector(`td:nth-child(${getKeyIndex(key)})`).innerText;
-        return aValue.localeCompare(bValue, 'ru', { numeric: true });
-    });
-    const tbody = document.querySelector("tbody");
-    tbody.innerHTML = "";
-    tableData.forEach(row => tbody.appendChild(row));
+// Добавление сотрудника
+function addStaff(staffData) {
+    db.collection("staff").add(staffData)
+        .then(() => alert("Сотрудник добавлен!"))
+        .catch(error => console.error("Ошибка добавления: ", error));
 }
 
-// Gets the column index based on key
-function getKeyIndex(key) {
-    const mapping = { personalNumber: 1, lastName: 2, class: 6 };
-    return mapping[key];
+// Удаление ученика
+function deleteStudent(id) {
+    db.collection("students").doc(id).delete()
+        .then(() => alert("Ученик удалён!"))
+        .catch(error => console.error("Ошибка удаления: ", error));
 }
 
-// Promotes students to the next class
-function promoteStudents() {
-    fetch("/asy/students-data.json")
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(student => {
-                const match = student.class.match(/(\d+)(\D?)/);
-                if (match) {
-                    student.class = (parseInt(match[1]) + 1) + match[2];
-                }
-            });
-            renderStudentsTable(data);
-        });
+// Удаление сотрудника
+function deleteStaff(id) {
+    db.collection("staff").doc(id).delete()
+        .then(() => alert("Сотрудник удалён!"))
+        .catch(error => console.error("Ошибка удаления: ", error));
 }
 
-// Exports table to Excel
+// Экспорт таблицы в Excel
 function exportToExcel() {
     const table = document.querySelector("table");
     const rows = Array.from(table.rows).map(row => Array.from(row.cells).map(cell => cell.innerText));
@@ -213,9 +163,3 @@ function exportToExcel() {
     link.download = "table_export.csv";
     link.click();
 }
-
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
-<script src="/asy/firebase-config.js"></script>
-<script src="/asy/script.js" defer></script>

@@ -4,7 +4,7 @@ const db = firebase.firestore();
 
 // Функция выхода
 function logout() {
-    window.location.href = "/asy/index.html";
+    window.location.href = "/asy/login.html";
 }
 
 // Отображение таблицы учеников

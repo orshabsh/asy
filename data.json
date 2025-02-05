@@ -1,0 +1,27 @@
+[
+    {
+        "username": "ceo",
+        "password": "1234",
+        "role": "director"
+    },
+    {
+        "username": "cit",
+        "password": "1234",
+        "role": "director"
+    },
+    {
+        "username": "info",
+        "password": "1234",
+        "role": "secretary"
+    },
+    {
+        "username": "staff",
+        "password": "1234",
+        "role": "hr"
+    },
+    {
+        "username": "teach",
+        "password": "1234",
+        "role": "teacher"
+    }
+]

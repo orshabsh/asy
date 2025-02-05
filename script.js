@@ -7,15 +7,70 @@ function logout() {
 function showStudents() {
     document.getElementById("studentsControls").style.display = "block";
     document.getElementById("exportButton").style.display = "block";
-    loadTableData("/asy/students-data.json", "students");
+    function showStudents() {
+    document.getElementById("studentsControls").style.display = "block";
+    document.getElementById("exportButton").style.display = "block";
+
+    db.collection("students").get().then(snapshot => {
+        const students = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderStudentsTable(students);
+    });
+}
+
 }
 
 // Shows the staff table and hides students controls
 function showStaff() {
     document.getElementById("studentsControls").style.display = "none";
     document.getElementById("exportButton").style.display = "block";
-    loadTableData("/asy/staff-data.json", "staff");
+    function showStaff() {
+    document.getElementById("studentsControls").style.display = "none";
+    document.getElementById("exportButton").style.display = "block";
+
+    db.collection("staff").get().then(snapshot => {
+        const staff = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderStaffTable(staff);
+    });
 }
+
+}
+
+function updateStudent(id, updatedData) {
+    db.collection("students").doc(id).update(updatedData)
+        .then(() => alert("Данные обновлены!"))
+        .catch(error => console.error("Ошибка обновления: ", error));
+}
+
+function updateStaff(id, updatedData) {
+    db.collection("staff").doc(id).update(updatedData)
+        .then(() => alert("Данные обновлены!"))
+        .catch(error => console.error("Ошибка обновления: ", error));
+}
+
+function addStudent(studentData) {
+    db.collection("students").add(studentData)
+        .then(() => alert("Ученик добавлен!"))
+        .catch(error => console.error("Ошибка добавления: ", error));
+}
+
+function addStaff(staffData) {
+    db.collection("staff").add(staffData)
+        .then(() => alert("Сотрудник добавлен!"))
+        .catch(error => console.error("Ошибка добавления: ", error));
+}
+
+function deleteStudent(id) {
+    db.collection("students").doc(id).delete()
+        .then(() => alert("Ученик удалён!"))
+        .catch(error => console.error("Ошибка удаления: ", error));
+}
+
+function deleteStaff(id) {
+    db.collection("staff").doc(id).delete()
+        .then(() => alert("Сотрудник удалён!"))
+        .catch(error => console.error("Ошибка удаления: ", error));
+}
+
 
 // Loads table data from a JSON file
 function loadTableData(url, type) {

@@ -1,111 +1,202 @@
+/* Общие стили */
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    font-family: Arial, sans-serif;
     background-color: #f4f4f9;
-}
-
-.dashboard-container {
+    color: #333;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* Стили страницы входа */
+.login-container {
+    background: white;
     padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-container h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.login-container input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.login-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.login-container button:hover {
+    background-color: #45a049;
+}
+
+.login-container .error {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+/* Стили панели управления */
+.dashboard-container {
+    width: 90%;
+    max-width: 1200px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .logout-button {
     align-self: flex-end;
-    background-color: #ff6b6b;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #f44336;
     color: white;
     border: none;
-    padding: 10px 20px;
     border-radius: 5px;
-    font-size: 14px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .logout-button:hover {
-    background-color: #ff4c4c;
+    background-color: #d32f2f;
 }
 
 .buttons-container {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
 .buttons-container button {
-    background-color: #6c5ce7;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
     color: white;
     border: none;
-    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
+    transition: background-color 0.3s ease;
 }
 
 .buttons-container button:hover {
-    background-color: #5a4dcf;
-}
-
-#content {
-    width: 85%;
-    margin-top: 20px;
-    overflow-x: auto;
-}
-
-#filterClass,
-button {
-    display: inline-block;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #4CAF50; /* Зеленый */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-button:hover {
     background-color: #45a049;
 }
 
-
-#filterClass.active,
-button.active {
-    display: block;
-    margin-bottom: 10px;
+/* Контролы фильтрации и сортировки */
+#studentsControls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
-#content table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-#content th, #content td {
+#studentsControls select, #studentsControls button {
+    padding: 10px;
+    font-size: 16px;
     border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-#content th {
-    background-color: #4caf50;
-    color: white;
-}
-
-.export-button {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background-color: #6c5ce7;
-    color: white;
-    border: none;
-    padding: 10px 20px;
     border-radius: 5px;
+    background: white;
     cursor: pointer;
 }
 
+#studentsControls button {
+    background-color: #2196F3;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+#studentsControls button:hover {
+    background-color: #1976D2;
+}
+
+/* Таблица */
+#content {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+}
+
+table th, table td {
+    text-align: left;
+    padding: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Кнопка экспорта */
+.export-button {
+    align-self: flex-end;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none; /* Появляется только для определенных таблиц */
+    transition: background-color 0.3s ease;
+}
+
 .export-button:hover {
-    background-color: #5a4dcf;
+    background-color: #45a049;
+}
+
+/* Для мобильных устройств */
+@media (max-width: 768px) {
+    .buttons-container, #studentsControls {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .logout-button, .export-button {
+        width: 100%;
+        text-align: center;
+    }
 }

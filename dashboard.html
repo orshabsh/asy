@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +18,7 @@
             <button id="staffButton" onclick="showStaff()">Сотрудники</button>
         </div>
 
-        <!-- Filter and Sorting for Students -->
+        <!-- Controls for Students -->
         <div id="studentsControls" style="display: none;">
             <select id="filterClass" onchange="filterByClass()">
                 <option value="">Выберите класс</option>
@@ -33,6 +33,12 @@
             <button onclick="sortTable('personalNumber')">Сортировать по № личного дела</button>
             <button onclick="sortTable('class')">Сортировать по классу</button>
             <button onclick="promoteStudents()">Повысить класс</button>
+            <button onclick="addStudent()">Добавить ученика</button>
+        </div>
+
+        <!-- Controls for Staff -->
+        <div id="staffControls" style="display: none;">
+            <button onclick="addStaff()">Добавить сотрудника</button>
         </div>
 
         <!-- Table Content -->

@@ -2,46 +2,98 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    text-align: center;
+    background-color: #f4f4f9;
 }
 
-.login-container, .dashboard-container {
-    width: 300px;
-    margin: 100px auto;
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
     padding: 20px;
-    background: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
 }
 
-h2 {
+.logout-button {
+    align-self: flex-end;
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background-color: #ff4c4c;
+}
+
+.buttons-container {
+    display: flex;
+    gap: 10px;
     margin-bottom: 20px;
 }
 
-input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-button {
-    width: 100%;
-    padding: 10px;
-    background: #28a745;
+.buttons-container button {
+    background-color: #6c5ce7;
     color: white;
     border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.buttons-container button:hover {
+    background-color: #5a4dcf;
+}
+
+#content {
+    width: 85%;
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+#filterClass,
+button {
+    display: none;
+}
+
+#filterClass.active,
+button.active {
+    display: block;
+    margin-bottom: 10px;
+}
+
+#content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#content th, #content td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#content th {
+    background-color: #4caf50;
+    color: white;
+}
+
+.export-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: #6c5ce7;
+    color: white;
+    border: none;
+    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
 }
 
-button:hover {
-    background: #218838;
-}
-
-.error {
-    color: red;
-    margin-top: 10px;
+.export-button:hover {
+    background-color: #5a4dcf;
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Школа - Вход</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/asy/styles.css">
 </head>
 <body>
     <div class="login-container">
@@ -21,14 +21,14 @@
             const password = document.getElementById('password').value;
             const errorMessage = document.getElementById('error-message');
             
-            const response = await fetch('data.json');
+            const response = await fetch('/asy/data.json');
             const users = await response.json();
             
             const user = users.find(u => u.username === username && u.password === password);
             
             if (user) {
                 localStorage.setItem('userRole', user.role);
-                window.location.href = 'dashboard.html';
+                window.location.href = '/asy/dashboard.html';
             } else {
                 errorMessage.textContent = 'Неверный логин или пароль';
             }

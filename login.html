@@ -17,22 +17,25 @@
     
     <script>
         async function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('error-message');
-            
-            const response = await fetch('/asy/data.json');
-            const users = await response.json();
-            
-            const user = users.find(u => u.username === username && u.password === password);
-            
-            if (user) {
-                localStorage.setItem('userRole', user.role);
-                window.location.href = '/asy/dashboard.html';
-            } else {
-                errorMessage.textContent = 'Неверный логин или пароль';
-            }
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const errorMessage = document.getElementById('error-message');
+    try {
+        const response = await fetch('/asy/data.json');
+        if (!response.ok) throw new Error('Ошибка загрузки данных');
+        const users = await response.json();
+        const user = users.find(u => u.username === username && u.password === password);
+        if (user) {
+            localStorage.setItem('userRole', user.role);
+            window.location.href = '/asy/dashboard.html';
+        } else {
+            errorMessage.textContent = 'Неверный логин или пароль';
         }
-    </script>
+    } catch (error) {
+        errorMessage.textContent = 'Ошибка соединения с сервером';
+        console.error(error);
+    }
+}
+</script>
 </body>
 </html>

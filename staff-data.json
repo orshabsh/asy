@@ -1,1 +1,13 @@
+[
+    {
+        "login": "teacher1",
+        "lastName": "Петров",
+        "firstName": "Петр",
+        "middleName": "Петрович",
+        "birthDate": "1980-05-15",
+        "position": "Учитель математики",
+        "address": "ул. Гагарина, д. 10",
+        "hiringDate": "2010-09-01"
+    }
+]
 

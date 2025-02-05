@@ -14,6 +14,25 @@
         <button onclick="login()">Войти</button>
         <p id="error-message" class="error"></p>
     </div>
-    <script src="script.js"></script>
+    
+    <script>
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+            
+            const response = await fetch('data.json');
+            const users = await response.json();
+            
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                localStorage.setItem('userRole', user.role);
+                window.location.href = 'dashboard.html';
+            } else {
+                errorMessage.textContent = 'Неверный логин или пароль';
+            }
+        }
+    </script>
 </body>
 </html>

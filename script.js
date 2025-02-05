@@ -158,3 +158,9 @@ function exportToExcel() {
     link.download = "table_export.csv";
     link.click();
 }
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+<script src="/asy/firebase-config.js"></script>
+<script src="/asy/script.js" defer></script>
